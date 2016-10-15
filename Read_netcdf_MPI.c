@@ -8,7 +8,7 @@
 /* This is the name of the data file we will read. */
 /* How to comiple the code */
 
-# mpicc read_1_week.c -I$NETCDF/include -L$NETCDF/lib -lnetcdf -lm -g -o read_7day.exe
+// mpicc read_1_week.c -I$NETCDF/include -L$NETCDF/lib -lnetcdf -lm -g -o read_7day.exe
 
 /* We are reading 4D data, a 3x36x700x640 grid. */
 
