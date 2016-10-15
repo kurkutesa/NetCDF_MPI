@@ -6,14 +6,15 @@
 #include <mpi.h>
 
 /* This is the name of the data file we will read. */
+/* How to comiple the code */
 
-#define FILE_NAME "test.nc"
+# mpicc read_1_week.c -I$NETCDF/include -L$NETCDF/lib -lnetcdf -lm -g -o read_7day.exe
 
 /* We are reading 4D data, a 3x36x700x640 grid. */
 
-#define NX 6
-#define NY 7
-#define NT 3
+#define NX 640
+#define NY 700
+#define NT 42
 #define NZ 36
 
 
@@ -41,6 +42,8 @@ int main(int argc, char *argv[] )
    int ncid, varid_t, varid_p, varid_u, varid_v, varid_q, varid_z ;
    FILE *WRF_Profile; 
    char filename[64];
+  
+   char *FILE_NAME = argv[1];
 
    int x, y, t, z, retval, counter;
  
@@ -80,9 +83,12 @@ int main(int argc, char *argv[] )
           sprintf(filename,"WRF_Profile_%d_%d_%d",t,y,x);   // Open file to write data to file
           FILE *f1 = fopen(filename, "w"); // Write data to ascii file
 	        
-          char cmdbuf[BUFSIZ];    // use buffer to issue system commands in C program enviornment.
-          char cmdbufr[128];      // use buffer to issue system commands in C program enviornment.
-	        size_t idx[4];
+       	  char cmdbuf[BUFSIZ];  // create HCout
+      	  char cmdbufr[128];    // remove WRF_Profile files
+      	  char jjoin[BUFSIZ];   // join the HCout in one file
+      	  char rmHC[BUFSIZ];    // Remove HCout files
+		
+	   size_t idx[4];
           
           for(z=0;z<NZ;z++)
           {
@@ -105,10 +111,15 @@ int main(int argc, char *argv[] )
 
           //close our open file handles!
           fclose(f1);
-	        snprintf(cmdbuf, sizeof(cmdbuf), "./severe.exe 36 50. WRF_Profile_%d_%d_%d  ./OUTPUT/HCout_%d_%d_%d 0",t,y,x,t,y,x);   // assign system command within C enviornment
-          system(cmdbuf);                                                                                                        // issue system command within C enviornment
-//	  snprintf(cmdbufr, sizeof(cmdbufr), "rm WRF_Profile_%d_%d_%d",t,y,x); 
-//	  system(cmdbufr);
+	  snprintf(cmdbuf, sizeof(cmdbuf), "./severe.exe 36 50. WRF_Profile_%d_%d_%d  ./OUTPUT/HCout_%d_%d_%d 0",t,y,x,t,y,x);
+          system(cmdbuf);
+          snprintf(cmdbufr, sizeof(cmdbufr), "rm WRF_Profile_%d_%d_%d",t,y,x);
+          system(cmdbufr);
+          snprintf(jjoin, sizeof(jjoin), "cat ./OUTPUT/HCout_%d_%d_%d >> ./OUTPUT/%s_Final_%d",t,y,x,FILE_NAME,t );
+          system(jjoin);
+          snprintf(rmHC, sizeof(rmHC), "rm ./OUTPUT/HCout_%d_%d_%d",t,y,x);
+          system(rmHC);
+
          }
       }
 
