@@ -107,21 +107,21 @@ int main(int argc, char *argv[] )
 
             fprintf(f1,"%f %f %f %f %f %f \n", p1, z1, t1, rh1, u1, v1);  // write data to the file name "WRF_Profile_t_y_x"
         
-	  }
+	  }	// vertical level for loop
 
           //close our open file handles!
           fclose(f1);
 	  snprintf(cmdbuf, sizeof(cmdbuf), "./severe.exe 36 50. WRF_Profile_%d_%d_%d  ./OUTPUT/HCout_%d_%d_%d 0",t,y,x,t,y,x);
-          system(cmdbuf);
+          system(cmdbuf);  // run severe wetaher model
           snprintf(cmdbufr, sizeof(cmdbufr), "rm WRF_Profile_%d_%d_%d",t,y,x);
-          system(cmdbufr);
+          system(cmdbufr);  // rm souding files
           snprintf(jjoin, sizeof(jjoin), "cat ./OUTPUT/HCout_%d_%d_%d >> ./OUTPUT/%s_Final_%d",t,y,x,FILE_NAME,t );
-          system(jjoin);
+          system(jjoin);    // concatenate severe weather output to single file
           snprintf(rmHC, sizeof(rmHC), "rm ./OUTPUT/HCout_%d_%d_%d",t,y,x);
-          system(rmHC);
+          system(rmHC);	    // rm severe weather file
 
-         }
-      }
+         }	// loop over the longitude 
+      }		// loop over latitude
 
 
 /* Close the file, freeing all resources. */
